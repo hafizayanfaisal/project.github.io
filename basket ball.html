@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moving Basket Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      margin-top: 20px;
+    }
+
+    .court {
+      margin: 20px auto;
+      width: 400px;
+      height: 300px;
+      position: relative;
+      background: #3b7a57; /* Green basketball court */
+      border: 5px solid #000;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .hoop {
+      position: absolute;
+      top: 30px;
+      width: 100px;
+      height: 50px;
+      border: 3px solid #d62929;
+      background-color: transparent;
+      border-radius: 50%;
+      box-shadow: inset 0 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .ball {
+      position: absolute;
+      bottom: 20px;
+      left: calc(50% - 25px);
+      width: 50px;
+      height: 50px;
+      background-color: #f7931e;
+      border-radius: 50%;
+      border: 3px solid #000;
+    }
+
+    button {
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    #scoreboard {
+      margin: 20px;
+      font-size: 1.5em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Moving Basket Game</h1>
+  <div class="court">
+    <div class="hoop" id="hoop"></div>
+    <div class="ball" id="ball"></div>
+  </div>
+  <button id="shoot-button">Shoot</button>
+  <div id="scoreboard">Score: 0</div>
+
+  <script>
+    const ball = document.getElementById('ball');
+    const hoop = document.getElementById('hoop');
+    const shootButton = document.getElementById('shoot-button');
+    const scoreboard = document.getElementById('scoreboard');
+
+    let score = 0;
+    let hoopDirection = 1; // 1 for moving right, -1 for moving left
+    const hoopSpeed = 5; // Speed of the hoop movement
+    let hoopPosition = 0; // Initial position of the hoop
+
+    // Move the hoop continuously
+    function moveHoop() {
+      hoopPosition += hoopDirection * hoopSpeed;
+
+      // Reverse direction when hitting the edges
+      if (hoopPosition <= 0 || hoopPosition >= 300) {
+        hoopDirection *= -1;
+      }
+
+      hoop.style.left = `${hoopPosition}px`;
+      requestAnimationFrame(moveHoop);
+    }
+
+    // Start moving the hoop
+    moveHoop();
+
+    shootButton.addEventListener('click', () => {
+      shootButton.disabled = true; // Disable button during animation
+
+      // Animate the ball to the hoop
+      ball.style.transition = 'transform 1s ease';
+      ball.style.transform = `translate(-50px, -180px)`;
+
+      // Randomize whether the shot is successful
+      setTimeout(() => {
+        const hoopCenter = hoopPosition + 50; // Center of the hoop
+        const ballCenter = 200; // Center of the ball
+
+        // Check if the ball is aligned with the hoop
+        if (Math.abs(hoopCenter - ballCenter) < 40) {
+          score++;
+          scoreboard.textContent = `Score: ${score}`;
+          alert('Nice Shot! You scored!');
+        } else {
+          alert('Missed! Better luck next time.');
+        }
+
+        // Reset the ball's position
+        ball.style.transition = 'none';
+        ball.style.transform = 'translate(0, 0)';
+
+        shootButton.disabled = false; // Enable button again
+      }, 1000);
+    });
+  </script>
+</body>
+</html>
